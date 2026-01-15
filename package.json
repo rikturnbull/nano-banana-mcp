@@ -19,7 +19,8 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build && npm run typecheck"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run typecheck"
   },
   "keywords": [
     "mcp",
