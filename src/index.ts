@@ -27,12 +27,15 @@ const ConfigSchema = z.object({
 
 type Config = z.infer<typeof ConfigSchema>;
 
+const DEFAULT_MODEL_ID = "gemini-2.5-flash-image";
+
 class NanoBananaMCP {
   private server: Server;
   private genAI: GoogleGenAI | null = null;
   private config: Config | null = null;
   private lastImagePath: string | null = null;
   private configSource: 'environment' | 'config_file' | 'not_configured' = 'not_configured';
+  private modelId: string = DEFAULT_MODEL_ID;
 
   constructor() {
     this.server = new Server(
@@ -220,7 +223,7 @@ class NanoBananaMCP {
     
     try {
       const response = await this.genAI!.models.generateContent({
-        model: "gemini-2.5-flash-image-preview",
+        model: this.modelId,
         contents: prompt,
       });
       
@@ -265,7 +268,7 @@ class NanoBananaMCP {
       }
       
       // Build response content
-      let statusText = `🎨 Image generated with nano-banana (Gemini 2.5 Flash Image)!\n\nPrompt: "${prompt}"`;
+      let statusText = `🎨 Image generated with nano-banana (${this.modelId})!\n\nPrompt: "${prompt}"`;
       
       if (textContent) {
         statusText += `\n\nDescription: ${textContent}`;
@@ -353,7 +356,7 @@ class NanoBananaMCP {
       
       // Use new API format with multiple images and text
       const response = await this.genAI!.models.generateContent({
-        model: "gemini-2.5-flash-image-preview",
+        model: this.modelId,
         contents: [
           {
             parts: imageParts
@@ -631,6 +634,15 @@ class NanoBananaMCP {
   }
 
   public async run(): Promise<void> {
+    // Parse command-line arguments for modelId
+    const args = process.argv.slice(2);
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === '--model-id' && args[i + 1]) {
+        this.modelId = args[i + 1];
+        i++;
+      }
+    }
+    
     await this.loadConfig();
     
     const transport = new StdioServerTransport();

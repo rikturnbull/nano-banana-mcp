@@ -130,13 +130,26 @@ If you're using a different MCP client, you can configure nano-banana-mcp using 
 }
 ```
 
-**Method B: System Environment Variable**
+**Method B: With Custom Model ID**
+```json
+{
+  "nano-banana": {
+    "command": "npx",
+    "args": ["nano-banana-mcp", "--model-id", "gemini-2.5-flash-image"],
+    "env": {
+      "GEMINI_API_KEY": "your-gemini-api-key-here"
+    }
+  }
+}
+```
+
+**Method C: System Environment Variable**
 ```bash
 export GEMINI_API_KEY="your-gemini-api-key-here"
 npx nano-banana-mcp
 ```
 
-**Method C: Using the Configure Tool**
+**Method D: Using the Configure Tool**
 ```bash
 npx nano-banana-mcp
 # The server will prompt you to configure when first used
